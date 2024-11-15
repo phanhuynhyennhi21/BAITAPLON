@@ -1,0 +1,91 @@
+#tinhot1{
+	color: #000000;
+	font-size: 35px;
+	text-align: center;
+	font-weight: bold;
+}
+#tinhot2{
+	color: #000;
+	background-color: #000
+	font-size: 20px;
+	font-weight: bold;
+}
+#divchantrang{
+	color: #000;
+	font-size: 30px;
+	font-weight: bold;
+	background-color: #dfdfdf;
+	width: 90%;
+	height: 40px;
+	text-align: center;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #1f1d1d;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+input {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+button {
+    padding: 12px;
+    background-color: #47975a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+#message {
+    margin-top: 20px;
+    text-align: center;
+    color: #d9534f;
+    font-size: 14px;
+}

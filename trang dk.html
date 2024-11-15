@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký và Đăng Nhập</title>
+    <script src="./trang dk.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            width: 500px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .tabs button {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: none;
+            width: 50%;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        .tabs button.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <button id="registerTab" class="active">Đăng Ký</button>
+            <button id="loginTab">Đăng Nhập</button>
+        </div>
+
+        <!-- Đăng Ký Form -->
+        <div id="registerForm">
+            <h2>Đăng Ký Thành Viên</h2>
+            <form id="register">
+                <div class="form-group">
+                    <label for="fullname">Họ và Tên</label>
+                    <input type="text" id="fullname" name="fullname" required>
+                    <span id="fullnameError" class="error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                    <span id="emailError" class="error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" name="password" required>
+                    <span id="passwordError" class="error"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Đăng Ký">
+                </div>
+            </form>
+        </div>
+
+        <!-- Đăng Nhập Form -->
+        <div id="loginForm" style="display: none;">
+            <h2>Đăng Nhập</h2>
+            <form id="login">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="loginEmail" required>
+                    <span id="loginEmailError" class="error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mật khẩu</label>
+                    <input type="password" id="loginPassword" name="loginPassword" required>
+                    <span id="loginPasswordError" class="error"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Đăng Nhập">
+                </div>
+            </form>
+        </div>
+
+        <!-- Kết quả -->
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Tab chuyển đổi giữa Đăng Ký và Đăng Nhập
+            $('#registerTab').click(function() {
+                $('#registerTab').addClass('active');
+                $('#loginTab').removeClass('active');
+                $('#registerForm').show();
+                $('#loginForm').hide();
+            });
+
+            $('#loginTab').click(function() {
+                $('#loginTab').addClass('active');
+                $('#registerTab').removeClass('active');
+                $('#loginForm').show();
+                $('#registerForm').hide();
+            });
+
+            // Đăng Ký
+            $('#register').submit(function(event) {
+                event.preventDefault(); // Ngừng hành động mặc định của form
+
+                // Reset các thông báo lỗi
+                $('.error').text('');
+                $('#result').text('');
+
+                // Lấy dữ liệu từ các trường
+                let fullname = $('#fullname').val().trim();
+                let email = $('#email').val().trim();
+                let password = $('#password').val().trim();
+
+                let isValid = true;
+
+                // Kiểm tra Họ và Tên
+                if (fullname === '') {
+                    $('#fullnameError').text('Vui lòng nhập họ và tên.');
+                    isValid = false;
+                }
+
+                // Kiểm tra Email
+                let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+                if (email === '') {
+                    $('#emailError').text('Vui lòng nhập email.');
+                    isValid = false;
+                } else if (!emailPattern.test(email)) {
+                    $('#emailError').text('Email không hợp lệ.');
+                    isValid = false;
+                }
+
+                // Kiểm tra Mật khẩu
+                if (password === '') {
+                    $('#passwordError').text('Vui lòng nhập mật khẩu.');
+                    isValid = false;
+                } else if (password.length < 6) {
+                    $('#passwordError').text('Mật khẩu phải dài hơn 6 ký tự.');
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    $('#result').html(`
+                        <p><strong>Đăng ký thành công!</strong></p>
+                        <p><strong>Họ và Tên:</strong> ${fullname}</p>
+                        <p><strong>Email:</strong> ${email}</p>
+                    `);
+                }
+            });
+
+            // Đăng Nhập
+            $('#login').submit(function(event) {
+                event.preventDefault();
+
+                // Reset các thông báo lỗi
+                $('.error').text('');
+                $('#result').text('');
+
+                let email = $('#loginEmail').val().trim();
+                let password = $('#loginPassword').val().trim();
+
+                let isValid = true;
+
+                // Kiểm tra Email
+                let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+                if (email === '') {
+                    $('#loginEmailError').text('Vui lòng nhập email.');
+                    isValid = false;
+                } else if (!emailPattern.test(email)) {
+                    $('#loginEmailError').text('Email không hợp lệ.');
+                    isValid = false;
+                }
+
+                // Kiểm tra Mật khẩu
+                if (password === '') {
+                    $('#loginPasswordError').text('Vui lòng nhập mật khẩu.');
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    $('#result').html(`
+                        <p><strong>Đăng nhập thành công!</strong></p>
+                        <p><strong>Email:</strong> ${email}</p>
+                    `);
+                }
+            });
+        });
+    </script>
+    	<div id="divchantrang"><a href="./webtintuc.html">TRANG CHỦ</a></div>
+</body>
+</html>

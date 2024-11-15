@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán Đơn Hàng Mua Sách</title>
+    <script src="./tt.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+        }
+        input[type="text"], input[type="email"], input[type="number"], input[type="tel"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .book-list {
+            margin-bottom: 20px;
+        }
+        .book-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .book-list th, .book-list td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .total-price {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: right;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+  
+    <div class="container">
+        <h2>Thanh Toán Đơn Hàng Mua </h2>
+
+        <!-- Danh sách sách -->
+        <div class="book-list">
+            <h3>Danh Sách Báo Đã Chọn</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Loại Báo</th>
+                        <th>Số Lượng</th>
+                        <th>Giá</th>
+                        <th>Tổng</th>
+                    </tr>
+                </thead>
+                <tbody id="bookTable">
+                    <tr>
+                        <td>
+                            <select id="bookType1">
+                                <option value="novel" data-price="35000">Báo Dân Trí</option>
+                                <option value="economics" data-price="40000">Báo Tiền Phong</option>
+                                <option value="skills" data-price="20000">Báo Tuổi Trẻ</option>
+                            </select>
+                        </td>
+                        <td><input type="number" id="quantity1" value="1" min="1" onchange="calculateTotal()"></td>
+                        <td id="price1">25,000 VND</td>
+                        <td id="total1">30,000 VND</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select id="bookType2">
+                                <option value="novel" data-price="20000">Báo Tuổi Trẻ</option>
+                                <option value="economics" data-price="25000">Báo Công Luận</option>
+                                <option value="skills" data-price="35000">Báo Dân Trí</option>
+                            </select>
+                        </td>
+                        <td><input type="number" id="quantity2" value="1" min="1" onchange="calculateTotal()"></td>
+                        <td id="price2"> 30000 VND</td>
+                        <td id="total2"> 40000 VND</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Thông tin người mua -->
+        <form id="paymentForm">
+            <div class="form-group">
+                <label for="name">Họ và Tên</label>
+                <input type="text" id="name" name="name" required>
+                <span id="nameError" class="error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                <span id="emailError" class="error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Số Điện Thoại</label>
+                <input type="tel" id="phone" name="phone" required>
+                <span id="phoneError" class="error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Địa Chỉ Giao Hàng</label>
+                <input type="text" id="address" name="address" required>
+                <span id="addressError" class="error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="paymentMethod">Phương Thức Thanh Toán</label>
+                <select id="paymentMethod" name="paymentMethod" required>
+                    <option value="">Chọn phương thức thanh toán</option>
+                    <option value="credit">Thanh toán qua thẻ tín dụng</option>
+                    <option value="paypal">Thanh toán qua PayPal</option>
+                    <option value="cod">Thanh toán khi nhận hàng (COD)</option>
+                </select>
+                <span id="paymentMethodError" class="error"></span>
+            </div>
+
+            <div class="total-price">
+                <p>Tổng Tiền: <span id="totalAmount"></span> VND</p>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Xác Nhận Thanh Toán">
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function calculateTotal() {
+            // Lấy thông tin từ các trường sách
+            const quantity1 = parseInt(document.getElementById('quantity1').value);
+            const quantity2 = parseInt(document.getElementById('quantity2').value);
+
+            const bookType1 = document.getElementById('bookType1');
+            const bookType2 = document.getElementById('bookType2');
+            
+            const price1 = parseInt(bookType1.options[bookType1.selectedIndex].dataset.price);
+            const price2 = parseInt(bookType2.options[bookType2.selectedIndex].dataset.price);
+            
+            // Tính tổng cho mỗi loại sách
+            const total1 = quantity1 * price1;
+            const total2 = quantity2 * price2;
+            
+            // Cập nhật giá tiền
+            document.getElementById('price1').innerText = price1.toLocaleString() + ' VND';
+            document.getElementById('price2').innerText = price2.toLocaleString() + ' VND';
+            
+            document.getElementById('total1').innerText = total1.toLocaleString() + ' VND';
+            document.getElementById('total2').innerText = total2.toLocaleString() + ' VND';
+            
+            // Tính tổng đơn hàng
+            const totalAmount = total1 + total2;
+            document.getElementById('totalAmount').innerText = totalAmount.toLocaleString();
+        }
+
+        // Gắn sự kiện thay đổi loại sách
+        document.getElementById('bookType1').addEventListener('change', calculateTotal);
+        document.getElementById('bookType2').addEventListener('change', calculateTotal);
+
+        // Gắn sự kiện thay đổi số lượng sách
+        document.getElementById('quantity1').addEventListener('input', calculateTotal);
+        document.getElementById('quantity2').addEventListener('input', calculateTotal);
+
+        // Kiểm tra thông tin người mua khi submit form
+        document.getElementById('paymentForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Ngừng hành động mặc định của form
+
+            let isValid = true;
+
+            // Kiểm tra tên
+            const name = document.getElementById('name').value.trim();
+            if (!name) {
+                document.getElementById('nameError').innerText = 'Vui lòng nhập họ và tên.';
+                isValid = false;
+            } else {
+                document.getElementById('nameError').innerText = '';
+            }
+
+            // Kiểm tra email
+            const email = document.getElementById('email').value.trim();
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!email) {
+                document.getElementById('emailError').innerText = 'Vui lòng nhập email.';
+                isValid = false;
+            } else if (!emailPattern.test(email)) {
+                document.getElementById('emailError').innerText = 'Email không hợp lệ.';
+                isValid = false;
+            } else {
+                document.getElementById('emailError').innerText = '';
+            }
+
+            // Kiểm tra số điện thoại
+            const phone = document.getElementById('phone').value.trim();
+            const phonePattern = /^[0-9]{10}$/;
+            if (!phone) {
+                document.getElementById('phoneError').innerText = 'Vui lòng nhập số điện thoại.';
+                isValid = false;
+            } else if (!phonePattern.test(phone)) {
+                document.getElementById('phoneError').innerText = 'Số điện thoại không hợp lệ.';
+                isValid = false;
+            } else {
+                document.getElementById('phoneError').innerText = '';
+            }
+
+            // Kiểm tra địa chỉ
+            const address = document.getElementById('address').value.trim();
+            if (!address) {
+                document.getElementById('addressError').innerText = 'Vui lòng nhập địa chỉ giao hàng.';
+                isValid = false;
+            } else {
+                document.getElementById('addressError').innerText = '';
+            }
+
+            // Kiểm tra phương thức thanh toán
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            if (!paymentMethod) {
+                document.getElementById('paymentMethodError').innerText = 'Vui lòng chọn phương thức thanh toán.';
+                isValid = false;
+            } else {
+                document.getElementById('paymentMethodError').innerText = '';
+            }
+
+            // Nếu hợp lệ, thông báo thanh toán thành công
+            if (isValid) {
+                alert('Thanh toán thành công!');
+            }
+        });
+    </script>
+    
+<div id="divchantrang"><a href="./webtintuc.html">TRANG CHỦ</a></div>
+</body>
+</html>
